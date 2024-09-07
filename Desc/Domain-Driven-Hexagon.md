@@ -1,12 +1,20 @@
-# Hexagonal-Architecture
+## 헥사고날 아키텍처 구현하기
 
-Domain Driven Multi-Module Architecture
+[Hexagonal Architecture Repository](https://github.com/spacedustz/Hexagonal-Architecture)
 
-[Hexagonal Architecture 란?](./Desc/Hexagonal.md)
+기존 Layered Architecture의 경우 모든 계층이 영속성 계층을 토대로 만들어지기 때문에,
+
+비즈니스 로직의 변경이 어렵고, 테스트 또한 영속성 컴포넌트에 대한 의존성이 생기기 때문에 테스트의 복잡도를 높입니다.
+
+<br>
+
+헥사고날 아키텍처는 이런 문제점을 **의존 역전**을 통해 의존성이 **도메인**을 향하게 하면서 이런 문제를 해결합니다.
+
+어플리케이션의 핵심 로직을 외부 시스템으로부터 격리시켜 외부 **요소의 변화에 의해 핵심 로직이 영향을 받지 않도록 합니다.**
 
 ---
 
-## 📚 Hexagon
+## Hexagon
 
 구현되어 있는 각 Hexagon(Module)은 아래와 같이 사용됩니다.
 
@@ -34,9 +42,9 @@ Domain Driven Multi-Module Architecture
 
 - Domain, Use Case 외 Spring Boot, Common 모듈 내 라이브러리 의존성을 가집니다.
 - 외부 인프라가 추가될떄 마다 Module을 분리해 관리합니다.
-   - infrastructure/persistence
-   - (필요 시 추가) infrastructure/kafka
-   - (필요 시 추가) infrastructure/redis
+  - infrastructure/persistence
+  - (필요 시 추가) infrastructure/kafka
+  - (필요 시 추가) infrastructure/redis
 - 각 모듈별로 config class를 정의하며, application-{module-name}.yml 파일을 통해 각 모듈별 설정을 관리합니다.
 
 <br>
@@ -46,14 +54,14 @@ Domain Driven Multi-Module Architecture
 여러 의존성들을 조합해 하나의 어플리케이션 서버를 구성하는 모듈입니다.
 
 - 외부 요청을 받아 Use Case를 실행하기 위한 Primary Adapter를 정의합니다.
-   - Rest Controller, Kafka Consumer 등
+  - Rest Controller, Kafka Consumer 등
 - Domain, Use Case, Infrastructure 외 Spring Boot, Common 모듈 내 라이브러리 의존성을 가집니다.
 - Spring Boot Application을 정의합니다.
 - Use Case와 Infrastructure를 의존합니ㅏㄷ.
 
 ---
 
-## 📚 구현 프로세스
+## 구현 프로세스
 
 ### Component Scan에 Lazy Init 적용하기
 
@@ -155,17 +163,17 @@ spring:
 
 ---
 
-## 📚 JPA Entity의 PK 생성 시 DB 채번(Auto-Increment)을 줄이기 위해 Ulid 사용
+## JPA Entity의 PK 생성 시 DB 채번(Auto-Increment)을 줄이기 위해 Ulid 사용
 
-보통 JPA에서 Primary Key 생성 전략을 @GeneratedValue를 이용해 자동 생성할 수 있습니다.
+보통 JPA에서 Primary Key 생성 전략을 @GeneratedValue를 이용해 자동 생성할 수 있습니다. 
 
-이런 전략을 사용하면 데이터베이스에서 자동으로 채번을 해주기 때문에 개발자는 신경쓰지 않아도 됩니다.
+이런 전략을 사용하면 데이터베이스에서 자동으로 채번을 해주기 때문에 개발자는 신경쓰지 않아도 됩니다. 
 
 하지만 이런 전략은 데이터 베이스에 대한 채번을 유발하며, 영속화 되기 전까진 id값을 null로 유지해야한다는, DB에 의존적인 코드를 작성하게 되는 단점이 있습니다.
 
 <br>
 
-이런 단점을 해결하기 위해 UUID를 사용하기도 합니다..
+이런 단점을 해결하기 위해 UUID를 사용하기도 합니다.. 
 
 UUID는 DB 의존적이지 않고, 영속화 되기 전까지 id값을 null로 유지할 필요가 없습니다.
 
@@ -173,13 +181,13 @@ UUID는 DB 의존적이지 않고, 영속화 되기 전까지 id값을 null로 �
 
 <br>
 
-이때 ULID를 활용할 수 있습니다.
+이때 ULID를 활용할 수 있습니다. 
 
-ULID는 UUID와 호환성을 가지면서 시간순으로 정렬할 수 있는 특징을 가지고 있습니다.
+ULID는 UUID와 호환성을 가지면서 시간순으로 정렬할 수 있는 특징을 가지고 있습니다. 
 
-물론 ULID도단점이 있는데, UUID가 나노초까지 시간순을 보장해주는 반면 ULID는 밀리초까지만 시간순을 보장해줍니다.
+물론 ULID도단점이 있는데, UUID가 나노초까지 시간순을 보장해주는 반면 ULID는 밀리초까지만 시간순을 보장해줍니다. 
 
-이를 보완하기위해 ULID Creator 라이브러리는 **Monotonic ULID**를 제공합니다.
+이를 보완하기위해 ULID Creator 라이브러리는 **Monotonic ULID**를 제공합니다. 
 
 **Monotonic ULID**는 동일한 밀리초가 있다면 다음에 생성되는 ULID의 밀리초를 1 증가시켜서 생성하여 앞서 말한 단점을 보완합니다.
 
