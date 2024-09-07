@@ -1,23 +1,29 @@
-import com.example.blog.domain.model.Post
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
+import com.domain.Post
+import jakarta.persistence.*
+import java.util.*
 
 @Entity
-data class PostEntity(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long?,
-    val title: String,
-    val content: String
+class PostJpaEntity(
+    id: UUID,
+    title: String,
+    content: String
 ) {
-    fun toDomainModel(): Post {
-        return Post(id, title, content)
-    }
+    @Id
+    @Column(nullable = false)
+    var id: UUID = id
+    private set
+
+    @Column(nullable = false)
+    var title: String = title
+    private set
+
+    @Column(nullable = false)
+    var content: String = content
+    private set
 
     companion object {
-        fun fromDomainModel(post: Post): PostEntity {
-            return PostEntity(post.id, post.title, post.content)
+        fun from(post: Post): PostJpaEntity {
+            return PostJpaEntity(post.id, post.title, post.content)
         }
     }
 }
