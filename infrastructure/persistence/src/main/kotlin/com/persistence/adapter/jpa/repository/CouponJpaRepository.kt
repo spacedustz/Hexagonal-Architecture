@@ -1,0 +1,1 @@
+interface PostJpaRepository: JpaRepository<PostJpaEntity, UUID>
